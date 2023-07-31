@@ -46,10 +46,10 @@ configuration:
     upNodes: # information of userplane node (AN or UPF)
       gNB1: # the name of the node
         type: AN # the type of the node (AN or UPF)
-      UPF: # the name of the node
+      I-UPF: # the name of the node
         type: UPF # the type of the node (AN or UPF)
-        nodeID: upf.free5gc.org # the Node ID of this UPF
-        addr: upf.free5gc.org # the IP/FQDN of N4 interface on this UPF (PFCP)
+        nodeID: iupf.free5gc.org # the Node ID of this UPF
+        addr: iupf.free5gc.org # the IP/FQDN of N4 interface on this UPF (PFCP)
         sNssaiUpfInfos: # S-NSSAI information list for this UPF
           - sNssai: # S-NSSAI (Single Network Slice Selection Assistance Information)
               sst: 1 # Slice/Service Type (uinteger, range: 0~255)
@@ -72,12 +72,43 @@ configuration:
         interfaces: # Interface list for this UPF
           - interfaceType: N3 # the type of the interface (N3 or N9)
             endpoints: # the IP address of this N3/N9 interface on this UPF
-              - upf.free5gc.org
+              - iupf.free5gc.org
+            networkInstances:  # Data Network Name (DNN)
+              - internet
+      PSA-UPF: # the name of the node
+        type: UPF # the type of the node (AN or UPF)
+        nodeID: psaupf.free5gc.org # the Node ID of this UPF
+        addr: psaupf.free5gc.org # the IP/FQDN of N4 interface on this UPF (PFCP)
+        sNssaiUpfInfos: # S-NSSAI information list for this UPF
+          - sNssai: # S-NSSAI (Single Network Slice Selection Assistance Information)
+              sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            dnnUpfInfoList: # DNN information list for this S-NSSAI
+              - dnn: internet
+                pools:
+                  - cidr: 10.62.0.0/16
+                staticPools:
+                  - cidr: 10.62.100.0/24
+          - sNssai: # S-NSSAI (Single Network Slice Selection Assistance Information)
+              sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            dnnUpfInfoList: # DNN information list for this S-NSSAI
+              - dnn: internet
+                pools:
+                  - cidr: 10.63.0.0/16
+                staticPools:
+                  - cidr: 10.63.100.0/24
+        interfaces: # Interface list for this UPF
+          - interfaceType: N3 # the type of the interface (N3 or N9)
+            endpoints: # the IP address of this N3/N9 interface on this UPF
+              - psaupf.free5gc.org
             networkInstances:  # Data Network Name (DNN)
               - internet
     links: # the topology graph of userplane, A and B represent the two nodes of each link
       - A: gNB1
-        B: UPF
+        B: I-UPF
+      - A: I-UPF
+        B: PSA-UPF
   # retransmission timer for pdu session modification command
   t3591:
     enable: true     # true or false
@@ -89,6 +120,7 @@ configuration:
     expireTime: 16s   # default is 6 seconds
     maxRetryTimes: 3 # the max number of retransmission
   nrfUri: http://nrf.free5gc.org:8000 # a valid URI of NRF
+  ulcl: true
   #urrPeriod: 10 # default usage report period in seconds
   #urrThreshold: 1000 # default usage report threshold in bytes
 
