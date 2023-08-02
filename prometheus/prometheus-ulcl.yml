@@ -18,5 +18,6 @@ scrape_configs:
   scheme: http
   static_configs:
   - targets:
-    - edgecom-upf:9090
+    - edgecom-i-upf:9090
+    - edgecom-psa-upf:9090
     - localhost:9090

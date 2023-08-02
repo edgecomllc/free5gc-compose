@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  free5gc-upf:
+    command: sleep 5
+
+  free5gc-smf:
+    volumes:
+      - ./config/smfcfg-ulcl.yaml:/free5gc/config/smfcfg.yaml
+      - ./config/uerouting-ulcl.yaml:/free5gc/config/uerouting.yaml
+    depends_on:
+      - edgecom-i-upf
+      - edgecom-psa-upf
+
+  ueransim:
+    image: free5gc/ueransim:v3.3.0
+    depends_on:
+      - edgecom-i-upf
+      - edgecom-psa-upf
+
+
   edgecom-nat:
     container_name: nat
     build:
@@ -17,24 +35,12 @@ services:
         aliases:
           - natn6.free5gc.org
 
-  free5gc-upf:
-    command: sleep 5
-
-  free5gc-smf:
-    depends_on:
-      - edgecom-upf
-
-  ueransim:
-    image: free5gc/ueransim:v3.3.0
-    depends_on:
-      - edgecom-upf
-
-  edgecom-upf:
-    container_name: eupf
+  edgecom-i-upf:
+    container_name: i-eupf
     image: ghcr.io/edgecomllc/eupf:0.3.6
     #image: eupf-local:latest
     privileged: true
-    command: --iface eth0 --iface eth1 --n3addr 10.100.200.14 --nodeid 10.100.200.14 --paddr 10.100.200.14:8805 --attach generic
+    command: --iface eth0 --iface eth1 --n3addr 10.100.200.14 --nodeid iupf.free5gc.org --paddr 10.100.200.14:8805 --attach generic
     volumes:
       - /sys/fs/bpf:/sys/fs/bpf
       - ./eupf/entrypoint.sh:/app/bin/entrypoint.sh
@@ -43,10 +49,37 @@ services:
     ulimits:
       memlock: -1
     cap_add:
-# Granular caps support depends on kernel version
-#      - BPF
-##      - TRACING
-#      - PERFMON
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE # setrlimit
+    ports:
+      - "8082:8080"
+      - "9092:9090"
+    sysctls:
+      - net.ipv4.conf.all.forwarding=1
+    networks:
+      privnet_n6:
+        aliases:
+          - iupfn6.free5gc.org
+      privnet:
+        ipv4_address: 10.100.200.14
+        aliases:
+          - iupf.free5gc.org
+
+  edgecom-psa-upf:
+    container_name: psa-eupf
+    image: ghcr.io/edgecomllc/eupf:0.3.6
+    #image: eupf-local:latest
+    privileged: true
+    command: --iface eth0 --iface eth1 --n3addr 10.100.200.15 --nodeid psaupf.free5gc.org --paddr 10.100.200.15:8805 --attach generic
+    volumes:
+      - /sys/fs/bpf:/sys/fs/bpf
+      - ./eupf/entrypoint.sh:/app/bin/entrypoint.sh
+    environment:
+      GIN_MODE: release
+    ulimits:
+      memlock: -1
+    cap_add:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE # setrlimit
@@ -58,17 +91,17 @@ services:
     networks:
       privnet_n6:
         aliases:
-          - upfn6.free5gc.org
+          - psaupfn6.free5gc.org
       privnet:
-        ipv4_address: 10.100.200.14
+        ipv4_address: 10.100.200.15
         aliases:
-          - upf.free5gc.org
+          - psaupf.free5gc.org
 
   prometheus:
     image: prom/prometheus
     container_name: prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--config.file=/etc/prometheus/prometheus-ulcl.yml'
     ports:
       - 9091:9090
     restart: unless-stopped
