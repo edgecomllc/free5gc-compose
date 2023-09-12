@@ -23,6 +23,8 @@ services:
     container_name: nat
     build:
       context: ./nat
+    volumes:
+      - ./nat/busy-poll.sh:/app/bin/busy-poll.sh
     sysctls:
       - net.ipv4.conf.all.forwarding=1
     cap_add:
@@ -40,10 +42,10 @@ services:
     image: ghcr.io/edgecomllc/eupf:0.3.6
     #image: eupf-local:latest
     privileged: true
-    command: --iface eth0 --iface eth1 --n3addr 10.100.200.14 --nodeid iupf.free5gc.org --paddr 10.100.200.14:8805 --attach generic
+    command: --iface eth0 --n3addr 10.100.200.14 --nodeid iupf.free5gc.org --paddr 10.100.200.14:8805 --attach generic
     volumes:
       - /sys/fs/bpf:/sys/fs/bpf
-      - ./eupf/entrypoint.sh:/app/bin/entrypoint.sh
+      - ./eupf/entrypoint-i-upf.sh:/app/bin/entrypoint.sh
     environment:
       GIN_MODE: release
     ulimits:
@@ -58,9 +60,9 @@ services:
     sysctls:
       - net.ipv4.conf.all.forwarding=1
     networks:
-      privnet_n6:
-        aliases:
-          - iupfn6.free5gc.org
+#      privnet_n6:
+#        aliases:
+#          - iupfn6.free5gc.org
       privnet:
         ipv4_address: 10.100.200.14
         aliases:

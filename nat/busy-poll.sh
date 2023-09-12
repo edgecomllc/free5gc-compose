@@ -10,6 +10,7 @@ terminate=0
 
 iptables -t nat -A POSTROUTING -s 10.60.0.0/16 -o eth0 -j MASQUERADE
 iptables -t nat -A POSTROUTING -s 10.61.0.0/16 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.62.0.0/16 -o eth0 -j MASQUERADE
 iptables -A FORWARD -j ACCEPT
 
 #echo "1200 n6if" >> /etc/iproute2/rt_tables
@@ -19,6 +20,7 @@ iptables -A FORWARD -j ACCEPT
 #ip route add 10.60.0.0/16 via `nslookup upf.free5gc.org | awk '/^Address: / { print $2 }'` dev eth0
 ip route add 10.60.0.0/16 via `nslookup psaupfn6.free5gc.org | awk '/^Address: / { print $2 }'` dev eth1
 ip route add 10.61.0.0/16 via `nslookup psaupfn6.free5gc.org | awk '/^Address: / { print $2 }'` dev eth1
+ip route add 10.62.0.0/16 via `nslookup psaupfn6.free5gc.org | awk '/^Address: / { print $2 }'` dev eth1
 
 
 while [ $terminate -ne 1 ]

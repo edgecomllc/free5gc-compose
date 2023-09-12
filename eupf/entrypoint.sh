@@ -16,6 +16,7 @@ iptables -A FORWARD -j ACCEPT
 echo "1200 n6if" >> /etc/iproute2/rt_tables
 ip rule add from 10.60.0.0/16 table n6if
 ip rule add from 10.61.0.0/16 table n6if
+ip rule add from 10.62.0.0/16 table n6if
 #ip route add default via `nslookup nat.free5gc.org | awk '/^Address: / { print $2 }'` dev eth0 table n6if
 ip route add default via `nslookup natn6.free5gc.org | awk '/^Address: / { print $2 }'` dev eth1 table n6if
 
