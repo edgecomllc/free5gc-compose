@@ -93,9 +93,9 @@ services:
     networks:
       privnet:
   
-  ui:
+  edgecom-upf-ui:
     container_name: ui
-    image: ghcr.io/edgecomllc/eupf-api-ui:74adead324e00eb83f97adfec40c7188c5f57a4a
+    image: ghcr.io/edgecomllc/eupf-ui:74adead324e00eb83f97adfec40c7188c5f57a4a
     command: >
       sh -c "
       sed -i 's#__API_PORT__#'\"$$API_PORT\"'#g' /usr/share/nginx/html/env.js
