@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   free5gc-upf:
-    command: sleep 5
+    command: sleep 0
 
   free5gc-smf:
     volumes:
@@ -39,7 +39,7 @@ services:
 
   edgecom-i-upf:
     container_name: i-eupf
-    image: ghcr.io/edgecomllc/eupf:0.3.6
+    image: ghcr.io/edgecomllc/eupf:0.5.0
     #image: eupf-local:latest
     privileged: true
     command: --iface eth0 --n3addr 10.100.200.14 --nodeid iupf.free5gc.org --paddr 10.100.200.14:8805 --attach generic
@@ -70,7 +70,7 @@ services:
 
   edgecom-psa-upf:
     container_name: psa-eupf
-    image: ghcr.io/edgecomllc/eupf:0.3.6
+    image: ghcr.io/edgecomllc/eupf:0.5.0
     #image: eupf-local:latest
     privileged: true
     command: --iface eth0 --iface eth1 --n3addr 10.100.200.15 --nodeid psaupf.free5gc.org --paddr 10.100.200.15:8805 --attach generic
@@ -98,6 +98,38 @@ services:
         ipv4_address: 10.100.200.15
         aliases:
           - psaupf.free5gc.org
+
+  edgecom-psa-upf-2:
+    container_name: psa-eupf-2
+    image: ghcr.io/edgecomllc/eupf:0.5.0
+    #image: eupf-local:latest
+    privileged: true
+    command: --iface eth0 --iface eth1 --n3addr 10.100.200.16 --nodeid psaupf-2.free5gc.org --paddr 10.100.200.16:8805 --attach generic
+    volumes:
+      - /sys/fs/bpf:/sys/fs/bpf
+      - ./eupf/entrypoint.sh:/app/bin/entrypoint.sh
+    environment:
+      GIN_MODE: release
+    ulimits:
+      memlock: -1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE # setrlimit
+#    ports:
+#      - "8080:8081"
+#      - "9090:9091"
+    sysctls:
+      - net.ipv4.conf.all.forwarding=1
+    networks:
+      privnet_n6:
+        aliases:
+          - psaupfn6-2.free5gc.org
+      privnet:
+        ipv4_address: 10.100.200.16
+        aliases:
+          - psaupf-2.free5gc.org
+
 
   prometheus:
     image: prom/prometheus

@@ -112,11 +112,46 @@ configuration:
               - 10.100.200.15
             networkInstances:  # Data Network Name (DNN)
               - internet
+
+      PSA-UPF-2: # the name of the node
+        type: UPF # the type of the node (AN or UPF)
+        nodeID: psaupf-2.free5gc.org # the Node ID of this UPF
+        addr: psaupf-2.free5gc.org # the IP/FQDN of N4 interface on this UPF (PFCP)
+        sNssaiUpfInfos: # S-NSSAI information list for this UPF
+          - sNssai: # S-NSSAI (Single Network Slice Selection Assistance Information)
+              sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            dnnUpfInfoList: # DNN information list for this S-NSSAI
+              - dnn: internet
+#                pools:
+#                  - cidr: 10.62.0.0/16
+#                staticPools:
+#                  - cidr: 10.62.100.0/24
+          - sNssai: # S-NSSAI (Single Network Slice Selection Assistance Information)
+              sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            dnnUpfInfoList: # DNN information list for this S-NSSAI
+              - dnn: internet
+#                pools:
+#                  - cidr: 10.63.0.0/16
+#                staticPools:
+#                  - cidr: 10.63.100.0/24
+        interfaces: # Interface list for this UPF
+          - interfaceType: N9 # the type of the interface (N3 or N9)
+            endpoints: # the IP address of this N3/N9 interface on this UPF
+#              - psaupf.free5gc.org
+              - 10.100.200.16
+            networkInstances:  # Data Network Name (DNN)
+              - internet
+
+
     links: # the topology graph of userplane, A and B represent the two nodes of each link
       - A: gNB1
         B: I-UPF
       - A: I-UPF
         B: PSA-UPF
+      - A: I-UPF
+        B: PSA-UPF-2
   # retransmission timer for pdu session modification command
   t3591:
     enable: true     # true or false
