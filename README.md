@@ -108,9 +108,22 @@ For Linux kernel version below 5.4 you can setup a working environment using a v
 Please refer to [GTP5G kernel module](https://github.com/free5gc/gtp5g) for more information.
 
 ## ULCL Configuration 
-You can check the following informations below:
-- [ulcl-example branch](https://github.com/free5gc/free5gc-compose/tree/ulcl-example), or
-- [patch file](https://github.com/ianchen0119/free5gc-compose-ulcl)
+
+Here is configuration with three UPFs. [Traffic routes](config/uerouting-ulcl.yaml) is:
+
+- UE--gNodeB--I-UPF--PSA-UPF--Internet as default
+- UE--gNodeB--I-UPF--PSA-UPF-2--Internet--8.8.8.8/32 for imsi-208930000000001 specificPath
+
+All three deployed is our eUPFs.
+
+Start with 
+```ruby
+docker-compose -f docker-compose.yaml -f docker-compose.ulcl.yml up -d
+```
+
+> ℹ You can check the following informations below:
+> - [ulcl-example branch](https://github.com/free5gc/free5gc-compose/tree/ulcl-example), or
+> - [patch file](https://github.com/ianchen0119/free5gc-compose-ulcl)
 
 ## Reference
 - https://github.com/open5gs/nextepc/tree/master/docker
