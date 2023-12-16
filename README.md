@@ -114,7 +114,7 @@ Here is configuration with three UPFs. [Traffic routes](config/uerouting-ulcl.ya
 - UE--gNodeB--I-UPF--PSA-UPF--Internet as default
 - UE--gNodeB--I-UPF--PSA-UPF-2--Internet--8.8.8.8/32 for imsi-208930000000001 specificPath
 
-All three deployed is our eUPFs.
+All three deployed are our eUPFs. So, you **don't need any GTP5G kernel module**.
 
 Start with 
 ```ruby
